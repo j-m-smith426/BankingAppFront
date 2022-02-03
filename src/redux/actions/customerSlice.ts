@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import ICustomer from "../../models/Customer";
+import ICustomer, { defaultCustomer } from "../../models/Customer";
 
 export interface ICustomerState {
   customer: ICustomer;
@@ -25,7 +25,7 @@ const initialState: ICustomerState = {
     dob: "",
     email: "",
   },
-  status: "",
+  status: "idle",
   error: null,
 };
 
@@ -41,7 +41,13 @@ export const lookupCustomer = createAsyncThunk(
 const customerSlice = createSlice({
   name: "customer",
   initialState,
-  reducers: {},
+  reducers: {
+    clearCustomer: (state, action) => {
+      state.customer = defaultCustomer;
+      state.status = "idle";
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(lookupCustomer.pending, (state, action) => {
@@ -57,5 +63,7 @@ const customerSlice = createSlice({
       });
   },
 });
+
+export const { clearCustomer } = customerSlice.actions;
 
 export default customerSlice.reducer;

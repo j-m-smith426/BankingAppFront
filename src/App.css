@@ -18,6 +18,45 @@
 
 }
 
+input[type=button]{
+  padding:1% 2%;
+  text-align: center;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+.tableRow td, table{
+  border-bottom: 1px solid black;
+  border-collapse: collapse;
+  padding: 1%;
+}
+
+.modelBG{
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  background-color: #6e7175;
+  opacity: 0.8;
+}
+.modalBox{
+  z-index: 1;
+  position:absolute;
+  left: 25%;
+  height:auto;
+  width:50%;
+  padding-bottom: 2%;
+  background-color: white;
+  border: 1px solid black;
+}
+
+input[type=button]:active{
+  background-color: #6e7175;
+}
+.cancel{
+  width:10%;
+  align-self: flex-end;
+}
+
 .workspace{
   display: flex;
   flex-direction: column;
@@ -61,4 +100,19 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.resultBox{
+  display: flex;
+  width: 90%;
+  /* text-align: center; */
+  flex-direction: column;
+  padding: 5%;
+  padding-top: 1%;
+  padding-bottom: 2%;
+  flex-wrap: wrap;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-bottom: 1%;
+
 }

@@ -1,25 +1,24 @@
 import classes from './MainAdmin.module.css'
-import { FC, FormEvent } from 'react';
+import { FC, FormEvent, useState } from 'react';
+import CustomerLookup from '../../components/AdminComponents/CustomerLookup';
+import CustomerResult from '../../components/AdminComponents/CustomerResult';
+import { Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { IStoreState } from '../../redux/Store';
+import Loading from '../../components/Loading/Loading';
+import CustomerAdd from '../../components/AdminComponents/CustomerAdd';
 
 const MainAdmin:FC = (props) =>
 {
-    const handleSubmit = (event: FormEvent) =>
-    {
-        event.preventDefault();
-
-    }
-
+    const status = useSelector((state:IStoreState) => state.customer.status)
+    const customer = useSelector((state: IStoreState) => state.customer.customer)
+    const [pid, setPid] = useState(0);
     return (
         <div className="workspace">
-            <h3>Look up account</h3>
-            <form onSubmit={handleSubmit}>
-            <div className={classes.inputGroup}>
-            <label htmlFor="PID">PID: </label>
-                <input type="text" name="PID" id="PID" />
-                <input type="submit" value="Search" />
-            </div>
-
-            </form>
+            {status === "loading" && <Loading />}
+            {customer.customerUniqueID === 0 && status === 'idle' && <CustomerLookup setPid={setPid}/>}
+            {customer.customerUniqueID === 0 && status === 'failed' && <CustomerAdd pid={pid}/>}
+            {status === "succeeded" && <CustomerResult />}
         </div>
     );
 }

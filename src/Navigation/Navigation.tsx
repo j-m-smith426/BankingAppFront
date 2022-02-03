@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { BrowserRouter as Router, Outlet, Route, Routes } from "react-router-dom";
+import AccountDetails from "../components/AccountDetails/AccountDetails";
 import ChangePassword from "../screens/Login/ChangePassword";
 import Login from "../screens/Login/Login";
 import MainScreen from "../screens/MainScreen/MainScreen";
@@ -19,6 +20,11 @@ const Navigation:FC = (props) =>
                 <Route path="/home" element={
                     <ProtectedRoute>
                     <MainScreen />
+                </ProtectedRoute>
+                } />
+                <Route path="/account" element={
+                    <ProtectedRoute>
+                    <AccountDetails />
                 </ProtectedRoute>
                 } />
                 
