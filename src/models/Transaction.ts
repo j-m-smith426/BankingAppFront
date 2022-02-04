@@ -1,5 +1,5 @@
 interface ITransaction {
-  transactionID: number;
+  transactionID: number | null;
   referenceName: string;
   transaction_date: string;
   transaction_type: string;

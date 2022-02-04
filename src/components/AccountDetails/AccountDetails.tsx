@@ -34,14 +34,24 @@ const AccountDetails: FC = (props) => {
     setModalType("Deposit");
   };
 
+  const handleWithdraw = () => {
+    setShowModal(true);
+    setModalType("Withdraw");
+  };
+
+  const handleTransfer = () => {
+    setShowModal(true);
+    setModalType("Transfer");
+  };
+
   return (
     <div className={"container"}>
       <div className={lookupClasses.resultBox + " " + classes.fill}>
         <div className={classes.top}>
           <div className={classes.nav}>
             <input type="button" value="Deposit" onClick={handleDeposit} />
-            <input type="button" value="Withdraw" />
-            <input type="button" value="Transfer" />
+            <input type="button" value="Withdraw" onClick={handleWithdraw} />
+            <input type="button" value="Transfer" onClick={handleTransfer} />
           </div>
           <div className={classes.balance}>
             Balance: {account && account.currentBalance}

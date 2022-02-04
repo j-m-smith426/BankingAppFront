@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import ICustomer, { defaultCustomer } from "../../models/Customer";
+import IUser from "../../models/User";
+import { IStoreState } from "../Store";
 
 export interface ICustomerState {
   customer: ICustomer;
@@ -38,6 +40,16 @@ export const lookupCustomer = createAsyncThunk(
   }
 );
 
+export const saveCustomer = createAsyncThunk<
+  ICustomer,
+  ICustomer,
+  { state: IStoreState }
+>("customer/add", async (customer: ICustomer, thunkAPI) => {
+  return axios
+    .post("http://localhost:5000/customer/add", customer)
+    .then((resp) => resp.data);
+});
+
 const customerSlice = createSlice({
   name: "customer",
   initialState,
@@ -58,6 +70,17 @@ const customerSlice = createSlice({
         state.customer = action.payload;
       })
       .addCase(lookupCustomer.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || null;
+      })
+      .addCase(saveCustomer.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(saveCustomer.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.customer = action.payload;
+      })
+      .addCase(saveCustomer.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || null;
       });

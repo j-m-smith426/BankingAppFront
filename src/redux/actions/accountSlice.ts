@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice, Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 import IAccount from "../../models/Account";
+import ITransaction from "../../models/Transaction";
 import { IStoreState } from "../Store";
+import { SaveTransaction } from "./transactionSlice";
 
 export interface IAccountState {
   accounts: IAccount[];
@@ -48,6 +50,31 @@ export const retrieveAccounts = createAsyncThunk<
     .then((resp) => resp.data);
   return accounts;
 });
+
+const saveAccount = createAsyncThunk<IAccount, IAccount, AsyncThunkConfig>(
+  "account/add",
+  async (account: IAccount, thunkApi) => {
+    const savedAccount: IAccount = await axios
+      .post("http://localhost:5000/account/add", account)
+      .then((resp) => resp.data);
+    if (savedAccount.accountID !== null) {
+      const createdTransaction: ITransaction = {
+        transactionID: null,
+        referenceName: "Initial Deposit",
+        transaction_date: new Date().toISOString().substring(0, 10),
+        transaction_type: "Debit",
+        transaction_subtype: "Cash",
+        currentBalance: savedAccount.currentBalance,
+        associatedAccount: {
+          accountID: savedAccount.accountID,
+        },
+      };
+      thunkApi.dispatch(SaveTransaction(createdTransaction));
+      thunkApi.dispatch(retrieveAccounts);
+    }
+    return savedAccount;
+  }
+);
 
 const accountSlice = createSlice({
   name: "account",
