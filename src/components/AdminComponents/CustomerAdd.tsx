@@ -61,6 +61,7 @@ const CustomerAdd: FC<IProps> = (props) => {
             name="customerName"
             id="customerName"
             className={classes.inputText}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div className={classes.inputGroup}>
@@ -70,6 +71,7 @@ const CustomerAdd: FC<IProps> = (props) => {
             name="customerEmail"
             id="customerEmail"
             className={classes.inputText}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
       </div>
@@ -81,6 +83,7 @@ const CustomerAdd: FC<IProps> = (props) => {
             name="customerDOB"
             id="customerDOB"
             className={classes.inputText}
+            onChange={(e) => setDob(e.target.value)}
           />
         </div>
         <div className={classes.inputGroup}>
@@ -90,11 +93,17 @@ const CustomerAdd: FC<IProps> = (props) => {
             name="customerPostal"
             id="customerPostal"
             className={classes.inputText}
+            onChange={(e) => setPostal(e.target.value)}
           />
         </div>
       </div>
 
-      <input type="submit" value="save" className={classes.cancel} />
+      <input
+        type="submit"
+        value="save"
+        className={classes.cancel}
+        onClick={saveCustomerhandler}
+      />
     </div>
   );
 };

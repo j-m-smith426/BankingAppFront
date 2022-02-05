@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSlice, Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
-import IAccount from "../../models/Account";
+import IAccount, { defaultAccount } from "../../models/Account";
 import ITransaction from "../../models/Transaction";
 import { IStoreState } from "../Store";
 import { SaveTransaction } from "./transactionSlice";
 
 export interface IAccountState {
   accounts: IAccount[];
+  account: IAccount;
   selected: number | null;
   status: string;
   error: string | null;
@@ -14,6 +15,7 @@ export interface IAccountState {
 
 const initialState: IAccountState = {
   accounts: [],
+  account: defaultAccount,
   selected: null,
   status: "",
   error: null,
@@ -51,30 +53,38 @@ export const retrieveAccounts = createAsyncThunk<
   return accounts;
 });
 
-const saveAccount = createAsyncThunk<IAccount, IAccount, AsyncThunkConfig>(
-  "account/add",
-  async (account: IAccount, thunkApi) => {
-    const savedAccount: IAccount = await axios
-      .post("http://localhost:5000/account/add", account)
-      .then((resp) => resp.data);
-    if (savedAccount.accountID !== null) {
-      const createdTransaction: ITransaction = {
-        transactionID: null,
-        referenceName: "Initial Deposit",
-        transaction_date: new Date().toISOString().substring(0, 10),
-        transaction_type: "Debit",
-        transaction_subtype: "Cash",
-        currentBalance: savedAccount.currentBalance,
-        associatedAccount: {
-          accountID: savedAccount.accountID,
-        },
-      };
-      thunkApi.dispatch(SaveTransaction(createdTransaction));
-      thunkApi.dispatch(retrieveAccounts);
-    }
-    return savedAccount;
-  }
-);
+export const saveAccount = createAsyncThunk<
+  IAccount,
+  IAccount,
+  AsyncThunkConfig
+>("account/add", async (account: IAccount, thunkApi) => {
+  let savedAccount: IAccount = defaultAccount;
+  await axios
+    .post("http://localhost:5000/account/add", account)
+    .then((resp) => resp.data)
+    .then((data) => {
+      savedAccount = data;
+
+      if (savedAccount.accountID !== null) {
+        const createdTransaction: ITransaction = {
+          transactionID: null,
+          referenceName: "Initial Deposit",
+          transaction_date: new Date().toISOString().substring(0, 10),
+          transaction_type: "Debit",
+          transaction_subtype: "Cash",
+          currentBalance: savedAccount.currentBalance,
+          associatedAccount: {
+            accountID: savedAccount.accountID,
+          },
+        };
+        console.log(createdTransaction);
+        thunkApi
+          .dispatch(SaveTransaction(createdTransaction))
+          .then(() => thunkApi.dispatch(retrieveAccounts));
+      }
+    });
+  return savedAccount;
+});
 
 const accountSlice = createSlice({
   name: "account",
@@ -97,6 +107,17 @@ const accountSlice = createSlice({
         state.accounts = action.payload;
       })
       .addCase(retrieveAccounts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || null;
+      })
+      .addCase(saveAccount.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(saveAccount.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.account = action.payload;
+      })
+      .addCase(saveAccount.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || null;
       });

@@ -3,9 +3,7 @@ import ICustomer, { defaultCustomer } from "./Customer";
 interface IAccount {
   accountID: number | null;
   customer: {
-    user: {
-      userID: number;
-    };
+    customerUniqueID: number;
   };
   currentBalance: number;
 }
@@ -13,9 +11,7 @@ interface IAccount {
 export const defaultAccount: IAccount = {
   accountID: null,
   customer: {
-    user: {
-      userID: 0,
-    },
+    customerUniqueID: 0,
   },
   currentBalance: 0,
 };

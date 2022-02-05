@@ -23,7 +23,7 @@ const CustomerResult: FC = (props) => {
   useEffect(() => {
     dispatch(retrieveAccounts());
     dispatch(clearSelected(""));
-  }, []);
+  }, [addAccount]);
 
   return (
     <div className={classes.resultBox}>
@@ -79,7 +79,7 @@ const CustomerResult: FC = (props) => {
             id=""
             className={classes.inputText}
             disabled
-            value={customer.customerUniqueID}
+            value={customer.postal}
           />
         </div>
       </div>
